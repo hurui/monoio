@@ -76,6 +76,15 @@ impl<T: IoBufMut> OpAble for Read<T> {
         let fd = self.fd.as_raw_fd();
         let seek_offset = libc::off_t::try_from(self.offset)
             .map_err(|_| io::Error::new(io::ErrorKind::Other, "offset too big"))?;
+
+        #[cfg(target_os = "freebsd")]
+        return syscall_u32!(pread(
+            fd,
+            self.buf.write_ptr() as _,
+            self.buf.bytes_total(),
+            seek_offset
+        ));
+        
         #[cfg(not(target_os = "macos"))]
         return syscall_u32!(pread64(
             fd,
