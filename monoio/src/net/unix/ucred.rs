@@ -37,7 +37,7 @@ pub(crate) use self::impl_linux::get_peer_cred;
 #[cfg(any(target_os = "macos", target_os = "ios"))]
 pub(crate) use self::impl_macos::get_peer_cred;
 #[cfg(any(target_os = "dragonfly", target_os = "freebsd"))]
-pub(crate) use self::impl_macos::get_peer_cred;
+pub(crate) use self::impl_bsd::get_peer_cred;
 
 #[cfg(any(target_os = "dragonfly", target_os = "freebsd"))]
 pub(crate) mod impl_bsd {
