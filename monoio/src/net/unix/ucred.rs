@@ -59,8 +59,8 @@ pub(crate) mod impl_bsd {
 
             if ret == 0 {
                 Ok(super::UCred {
-                    uid: uid.assume_init() as unix::uid_t,
-                    gid: gid.assume_init() as unix::gid_t,
+                    uid: uid.assume_init(),
+                    gid: gid.assume_init(),
                     pid: None,
                 })
             } else {
