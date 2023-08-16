@@ -37,7 +37,7 @@ pub(crate) use self::impl_linux::get_peer_cred;
 #[cfg(any(target_os = "macos", target_os = "ios", target_os = "freebsd"))]
 pub(crate) use self::impl_macos::get_peer_cred;
 
-#[cfg(any(target_os = "macos", target_os = "ios"))]
+#[cfg(any(target_os = "macos", target_os = "ios", target_os = "freebsd"))]
 pub(crate) mod impl_macos {
     use std::{
         io,
