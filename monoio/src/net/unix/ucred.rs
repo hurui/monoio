@@ -34,7 +34,7 @@ impl UCred {
 
 #[cfg(any(target_os = "linux", target_os = "android", target_os = "openbsd"))]
 pub(crate) use self::impl_linux::get_peer_cred;
-#[cfg(any(target_os = "macos", target_os = "ios"))]
+#[cfg(any(target_os = "macos", target_os = "ios", target_os = "freebsd"))]
 pub(crate) use self::impl_macos::get_peer_cred;
 
 #[cfg(any(target_os = "macos", target_os = "ios"))]
