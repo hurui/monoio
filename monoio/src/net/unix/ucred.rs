@@ -34,10 +34,43 @@ impl UCred {
 
 #[cfg(any(target_os = "linux", target_os = "android", target_os = "openbsd"))]
 pub(crate) use self::impl_linux::get_peer_cred;
-#[cfg(any(target_os = "macos", target_os = "ios", target_os = "freebsd"))]
+#[cfg(any(target_os = "macos", target_os = "ios"))]
+pub(crate) use self::impl_macos::get_peer_cred;
+#[cfg(any(target_os = "dragonfly", target_os = "freebsd"))]
 pub(crate) use self::impl_macos::get_peer_cred;
 
-#[cfg(any(target_os = "macos", target_os = "ios", target_os = "freebsd"))]
+#[cfg(any(target_os = "dragonfly", target_os = "freebsd"))]
+pub(crate) mod impl_bsd {
+    use crate::net::unix::{self, UnixStream};
+
+    use libc::getpeereid;
+    use std::io;
+    use std::mem::MaybeUninit;
+    use std::os::unix::io::AsRawFd;
+
+    pub(crate) fn get_peer_cred(sock: &UnixStream) -> io::Result<super::UCred> {
+        unsafe {
+            let raw_fd = sock.as_raw_fd();
+
+            let mut uid = MaybeUninit::uninit();
+            let mut gid = MaybeUninit::uninit();
+
+            let ret = getpeereid(raw_fd, uid.as_mut_ptr(), gid.as_mut_ptr());
+
+            if ret == 0 {
+                Ok(super::UCred {
+                    uid: uid.assume_init() as unix::uid_t,
+                    gid: gid.assume_init() as unix::gid_t,
+                    pid: None,
+                })
+            } else {
+                Err(io::Error::last_os_error())
+            }
+        }
+    }
+}
+
+#[cfg(any(target_os = "macos", target_os = "ios"))]
 pub(crate) mod impl_macos {
     use std::{
         io,
